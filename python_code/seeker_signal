@@ -1,0 +1,8 @@
+def on_received_value(name, value):
+    global signal
+    signal = radio.received_packet(RadioPacketProperty.SIGNAL_STRENGTH)
+    led.plot_bar_graph(Math.map(signal, -95, -42, 0, 9), 9)
+radio.on_received_value(on_received_value)
+
+signal = 0
+radio.set_group(1)
