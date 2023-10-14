@@ -1,10 +1,10 @@
 def on_button_pressed_ab():
-    basic.show_string("Q" + str(id2))
-    radio.send_string("T/F")
+    basic.show_string("Q" + str(beacon_id))
+    radio.send_string("M4")
 input.on_button_pressed(Button.AB, on_button_pressed_ab)
 
 def on_received_string(receivedString):
-    if receivedString == "T":
+    if receivedString == "C":
         basic.show_icon(IconNames.YES)
     else:
         basic.show_icon(IconNames.NO)
@@ -12,10 +12,15 @@ def on_received_string(receivedString):
     basic.clear_screen()
 radio.on_received_string(on_received_string)
 
-id2 = 0
+beacon_id = 0
 radio.set_group(1)
 radio.set_transmit_power(1)
-id2 = 1
-basic.show_string("B" + str(id2))
+beacon_id = 1
+basic.show_string("B" + str(beacon_id))
 basic.pause(500)
 basic.clear_screen()
+
+def on_forever():
+    radio.send_value("Q", beacon_id)
+    basic.pause(200)
+basic.forever(on_forever)
