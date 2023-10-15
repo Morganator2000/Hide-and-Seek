@@ -18,20 +18,11 @@ def on_button_pressed_ab():
 input.on_button_pressed(Button.AB, on_button_pressed_ab)
 
 def on_received_string(receivedString):
-    global answer, homing, options
-    answer = 0
-    homing = 0
-    if receivedString == "T/F":
-        options = ["T", "F"]
-    elif receivedString == "M3":
-        options = ["A", "B", "C"]
-    elif receivedString == "M4":
-        options = ["A", "B", "C", "D"]
-    elif receivedString == "M5":
-        options = ["A", "B", "C", "D", "E"]
-    else:
-        basic.show_string("Err")
-    basic.show_string("" + (options[0]))
+    global signal
+    signal = radio.received_packet(RadioPacketProperty.SIGNAL_STRENGTH)
+    if homing == 1:
+        basic.clear_screen()
+        led.plot_bar_graph(Math.map(signal, -94, -42, 0, 9), 9)
 radio.on_received_string(on_received_string)
 
 def on_button_pressed_b():
@@ -52,11 +43,22 @@ def on_gesture_shake():
 input.on_gesture(Gesture.SHAKE, on_gesture_shake)
 
 def on_received_value(name, value):
-    global signal
-    signal = radio.received_packet(RadioPacketProperty.SIGNAL_STRENGTH)
-    if homing == 1:
-        basic.clear_screen()
-        led.plot_bar_graph(Math.map(signal, -94, -42, 0, 9), 9)
+    global homing, answer, options
+    answered_questions: List[str] = []
+    homing = 0
+    answered_questions.append("" + name + str(value))
+    answer = 0
+    if name == "T/F":
+        options = ["T", "F"]
+    elif name == "M3":
+        options = ["A", "B", "C"]
+    elif name == "M4":
+        options = ["A", "B", "C", "D"]
+    elif name == "M5":
+        options = ["A", "B", "C", "D", "E"]
+    else:
+        basic.show_string("Err")
+    basic.show_string("" + (options[0]))
 radio.on_received_value(on_received_value)
 
 signal = 0
