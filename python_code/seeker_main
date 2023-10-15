@@ -7,21 +7,26 @@ def on_button_pressed_a():
 input.on_button_pressed(Button.A, on_button_pressed_a)
 
 def on_button_pressed_ab():
+    global answering
     radio.send_string("" + (options[answer]))
+    answering = 0
 input.on_button_pressed(Button.AB, on_button_pressed_ab)
 
 def on_received_string(receivedString):
-    global options, answer
+    global answer, answering, options
+    answer = 0
+    answering = 1
     if receivedString == "T/F":
         options = ["T", "F"]
-        basic.show_string("T")
-        answer = 0
+    elif receivedString == "M3":
+        options = ["A", "B", "C"]
     elif receivedString == "M4":
         options = ["A", "B", "C", "D"]
-        basic.show_string("A")
-        answer = 0
+    elif receivedString == "M5":
+        options = ["A", "B", "C", "D", "E"]
     else:
         basic.show_string("Err")
+    basic.show_string("" + (options[0]))
 radio.on_received_string(on_received_string)
 
 def on_button_pressed_b():
@@ -35,15 +40,17 @@ input.on_button_pressed(Button.B, on_button_pressed_b)
 def on_received_value(name, value):
     global signal
     signal = radio.received_packet(RadioPacketProperty.SIGNAL_STRENGTH)
-    if signal < -70:
+    if answering == 0:
         basic.clear_screen()
-        led.plot_bar_graph(Math.map(signal, -94, -60, 0, 9), 9)
+        led.plot_bar_graph(Math.map(signal, -94, -42, 0, 9), 9)
 radio.on_received_value(on_received_value)
 
 signal = 0
 answer = 0
 options: List[str] = []
+answering = 0
 radio.set_group(1)
+answering = 0
 options = ["T", "F"]
 seeker_id = 1
 basic.show_string("S" + str(seeker_id))

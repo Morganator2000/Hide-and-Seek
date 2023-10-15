@@ -8,7 +8,7 @@ def on_received_string(receivedString):
         basic.show_icon(IconNames.YES)
     else:
         basic.show_icon(IconNames.NO)
-    basic.pause(2000)
+    basic.pause(1000)
     basic.clear_screen()
 radio.on_received_string(on_received_string)
 
