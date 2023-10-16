@@ -9,3 +9,4 @@ Windows:
     robocopy /z . D:\ file-name.hex
 
 So far this method has not failed me.
+This command can maybe be used to copy the hex files from the app.
