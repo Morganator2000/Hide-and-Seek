@@ -1,11 +1,11 @@
-The microbit code does not always copy correctly using the drag-and drop method.
+The micro:bit code does not always copy correctly using the drag-and drop method.
 Here's what you do in those situations.
 
 Windows:
 1. Open the command prompt.
 2. Navigate to the download folder.
     ex: cd /Users/username/Downloads
-3. Run this command, using the name of your hex file.
+3. Run this command, using the name of your hex file. It assumes the micro:bit is in the D drive.
     robocopy /z . D:\ file-name.hex
 
 So far this method has not failed me.
