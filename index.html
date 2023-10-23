@@ -9,27 +9,46 @@
         .form-group {
             margin-bottom: 10px;
         }
+
+        #questionsContainer {
+            display: none;
+        }
     </style>
 </head>
 <body>
     <form id="microbitForm">
-    
-        <div class="form-group">
-            <label for="num_seekers">Number of Seeking micro:bits:</label>
-            <input type="number" id="num_seekers" name="num_seekers" required>
+
+        <div id="microbitSetup">
+            <div class="form-group">
+                <label for="num_seekers">Number of Seeking micro:bits:</label>
+                <input type="number" id="num_seekers" name="num_seekers" required>
+            </div>
+
+            <div class="form-group">
+                <label for="num_beacons">Number of Hidden micro:bits:</label>
+                <input type="number" id="num_beacons" name="num_beacons" required>
+            </div>
+            <button id="continueButton" type="button" onclick="showQuestionsForm()">Continue</button>
         </div>
 
-        <div class="form-group">
-            <label for="num_beacons">Number of Hidden micro:bits:</label>
-            <input type="number" id="num_beacons" name="num_beacons" required onchange="createQuestionInputs()">
+        <div id="questionsContainer">
         </div>
-    
-        <div id="questionsContainer"></div>
-    
-        <button type="submit">Submit</button>
+
     </form>
 
 <script>
+    function showQuestionsForm() {
+    const numBeacons = document.getElementById('num_beacons').value;
+    if (numBeacons && !isNaN(numBeacons) && numBeacons > 0) {
+        createQuestionInputs();
+        
+        // Hide setup container and show questions container
+        document.getElementById('microbitSetup').style.display = 'none';
+        document.getElementById('questionsContainer').style.display = 'block';
+    } else {
+        alert('Please enter the number of Hidden micro:bits.');
+    }
+}
      function createAnswerInputs(parentElement, questionType, questionIndex) {
         // Check if there's an existing answersContainer and remove it
         const existingAnswersContainer = parentElement.querySelector('.answersContainer');
@@ -132,6 +151,11 @@
 
             questionsContainer.appendChild(div);
         }
+        const submitButton = document.createElement('button');
+            submitButton.id = 'submitQuestionsButton';
+            submitButton.type = 'submit';
+            submitButton.textContent = 'Submit';
+            questionsContainer.appendChild(submitButton);
     }
 
     // This function will be triggered when the form is submitted.
