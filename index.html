@@ -12,109 +12,65 @@
     </style>
 </head>
 <body>
-    <form id="microbitForm">
-    
-        <div class="form-group">
-            <label for="num_seekers">Number of Seeking micro:bits:</label>
-            <input type="number" id="num_seekers" name="num_seekers" required>
-        </div>
 
-        <div class="form-group">
-            <label for="num_beacons">Number of Hidden micro:bits:</label>
-            <input type="number" id="num_beacons" name="num_beacons" required onchange="createQuestionInputs()">
-        </div>
-    
-        <div id="questionsContainer"></div>
-    
-        <button type="submit">Submit</button>
-    </form>
+<form id="microbitForm">
+    <div class="form-group">
+        <label for="num_beacons">Number of Hidden Microbits:</label>
+        <input type="number" id="num_beacons" name="num_beacons" required>
+    </div>
+
+    <div class="form-group">
+        <label for="num_seekers">Number of Seeking microbits:</label>
+        <input type="number" id="num_seekers" name="num_seekers" required>
+    </div>
+
+    <div class="form-group">
+        <label for="num_clues">Select Number of Clues</label>
+        <select id="num_clues" name="num_clues" onchange="createClueInputs()">
+            <option value="" disabled selected>Choose...</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+        </select>
+    </div>
+
+    <div id="cluesContainer"></div>
+
+    <button type="submit">Submit</button>
+</form>
 
 <script>
-     function createAnswerInputs(parentElement, questionType, questionIndex) {
-        const answersContainer = document.createElement('div');
-        answersContainer.className = 'answersContainer';
-
-        if (questionType === "true_false") {
-            // Create true and false radio buttons
-            ['True', 'False'].forEach(value => {
-                const div = document.createElement('div');
-
-                const radio = document.createElement('input');
-                radio.type = 'radio';
-                radio.name = `answer_${questionIndex}`;
-                radio.value = value.toLowerCase();
-
-                const label = document.createElement('label');
-                label.textContent = value;
-
-                div.appendChild(radio);
-                div.appendChild(label);
-                answersContainer.appendChild(div);
-            });
-        } else if (questionType === "multiple_choice") {
-            // Create 4 multiple choice options
-            for (let i = 1; i <= 4; i++) {
-                const div = document.createElement('div');
-
-                const input = document.createElement('input');
-                input.type = 'text';
-                input.name = `mc_option_${questionIndex}_${i}`;
-                input.placeholder = `Option ${i}`;
-
-                div.appendChild(input);
-                answersContainer.appendChild(div);
-            }
-        }
-
-        parentElement.appendChild(answersContainer);
-    }
-
-    function createQuestionInputs() {
-        const questionsContainer = document.getElementById('questionsContainer');
-        const numQuestions = parseInt(document.getElementById('num_beacons').value, 10);
-
+    function createClueInputs() {
+        const cluesContainer = document.getElementById('cluesContainer');
+        const numClues = parseInt(document.getElementById('num_clues').value, 10);
+        
         // Clear previous inputs
-        questionsContainer.innerHTML = '';
+        cluesContainer.innerHTML = '';
 
-        for (let i = 0; i < numQuestions; i++) {
+        for (let i = 0; i < numClues; i++) {
             const div = document.createElement('div');
             div.className = 'form-group';
 
-            const questionLabel = document.createElement('label');
-            questionLabel.htmlFor = `question_${i + 1}`;
-            questionLabel.textContent = `Question ${i + 1}:`;
+            const label = document.createElement('label');
+            label.htmlFor = `clue_${i + 1}`;
+            label.textContent = `Clue ${i + 1}:`;
             
-            const questionInput = document.createElement('input');
-            questionInput.type = 'text';
-            questionInput.id = `question_${i + 1}`;
-            questionInput.name = `question_${i + 1}`;
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.id = `clue_${i + 1}`;
+            input.name = `clue_${i + 1}`;
             
-            const typeLabel = document.createElement('label');
-            typeLabel.htmlFor = `type_${i + 1}`;
-            typeLabel.textContent = `Type for Question ${i + 1}:`;
-
-            const typeSelect = document.createElement('select');
-            typeSelect.id = `type_${i + 1}`;
-            typeSelect.name = `type_${i + 1}`;
-            typeSelect.onchange = () => createAnswerInputs(div, typeSelect.value, i + 1);
-
-            const trueFalseOption = document.createElement('option');
-            trueFalseOption.value = 'true_false';
-            trueFalseOption.textContent = 'True/False';
+            div.appendChild(label);
+            div.appendChild(input);
             
-            const multipleChoiceOption = document.createElement('option');
-            multipleChoiceOption.value = 'multiple_choice';
-            multipleChoiceOption.textContent = 'Multiple Choice';
-
-            typeSelect.appendChild(trueFalseOption);
-            typeSelect.appendChild(multipleChoiceOption);
-
-            div.appendChild(questionLabel);
-            div.appendChild(questionInput);
-            div.appendChild(typeLabel);
-            div.appendChild(typeSelect);
-
-            questionsContainer.appendChild(div);
+            cluesContainer.appendChild(div);
         }
     }
 
@@ -125,7 +81,7 @@
         // Extract details from the form
         const beacons = document.getElementById('num_beacons').value;
         const seekers = document.getElementById('num_seekers').value;
-        const questions = Array.from(document.querySelectorAll('#questionsContainer input')).map(input => input.value);
+        const clues = Array.from(document.querySelectorAll('#cluesContainer input')).map(input => input.value);
 
         // You can now process these values as needed.
         // For now, just alerting the values.
