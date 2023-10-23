@@ -31,6 +31,12 @@
 
 <script>
      function createAnswerInputs(parentElement, questionType, questionIndex) {
+        // Check if there's an existing answersContainer and remove it
+        const existingAnswersContainer = parentElement.querySelector('.answersContainer');
+        if (existingAnswersContainer) {
+            parentElement.removeChild(existingAnswersContainer);
+        }
+
         const answersContainer = document.createElement('div');
         answersContainer.className = 'answersContainer';
 
@@ -56,11 +62,19 @@
             for (let i = 1; i <= 4; i++) {
                 const div = document.createElement('div');
 
+                const correct = document.createElement('input');
+                correct.type = 'checkbox';
+                correct.name = `mc_correct_${questionIndex}_${i}`;
+                const correctLabel = document.createElement('label');
+                correctLabel.textContent = 'Correct';
+                
                 const input = document.createElement('input');
                 input.type = 'text';
                 input.name = `mc_option_${questionIndex}_${i}`;
                 input.placeholder = `Option ${i}`;
 
+                div.appendChild(correct);
+                div.appendChild(correctLabel);
                 div.appendChild(input);
                 answersContainer.appendChild(div);
             }
@@ -114,6 +128,8 @@
             div.appendChild(typeLabel);
             div.appendChild(typeSelect);
 
+            createAnswerInputs(div, 'true_false', i + 1);
+
             questionsContainer.appendChild(div);
         }
     }
@@ -125,11 +141,11 @@
         // Extract details from the form
         const beacons = document.getElementById('num_beacons').value;
         const seekers = document.getElementById('num_seekers').value;
-        const questions = Array.from(document.querySelectorAll('#questionsContainer input')).map(input => input.value);
+        const questions = Array.from(document.querySelectorAll('#questionsContainer input[type=text]')).map(input => input.value);
 
         // You can now process these values as needed.
         // For now, just alerting the values.
-        alert(`Beacons: ${beacons}\nSeekers: ${seekers}\nClues: ${clues.join(', ')}`);
+        alert(`Beacons: ${beacons}\nSeekers: ${seekers}\nQuestions: ${questions.join(', ')}`);
     });
 </script>
 
