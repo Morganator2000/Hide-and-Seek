@@ -5,17 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="theme.css">
     <title>micro:bit Hide N Seek Setup</title>
-    <style>
-        .form-group {
-            margin-bottom: 10px;
-        }
-
-        #questionsContainer {
-            display: none;
-        }
-    </style>
 </head>
 <body>
+    <div class="centered-container">
     <form id="microbitForm">
 
         <div id="microbitSetup">
@@ -35,72 +27,86 @@
         </div>
 
     </form>
+</div>
 
 <script>
     function showQuestionsForm() {
-    const numBeacons = document.getElementById('num_beacons').value;
-    if (numBeacons && !isNaN(numBeacons) && numBeacons > 0) {
-        createQuestionInputs();
-        
-        // Hide setup container and show questions container
-        document.getElementById('microbitSetup').style.display = 'none';
-        document.getElementById('questionsContainer').style.display = 'block';
-    } else {
-        alert('Please enter the number of Hidden micro:bits.');
-    }
-}
-     function createAnswerInputs(parentElement, questionType, questionIndex) {
-        // Check if there's an existing answersContainer and remove it
-        const existingAnswersContainer = parentElement.querySelector('.answersContainer');
-        if (existingAnswersContainer) {
-            parentElement.removeChild(existingAnswersContainer);
-        }
+            const numBeacons = document.getElementById('num_beacons').value;
+            if (numBeacons && !isNaN(numBeacons) && numBeacons > 0) {
+                createQuestionInputs();
 
-        const answersContainer = document.createElement('div');
-        answersContainer.className = 'answersContainer';
-
-        if (questionType === "true_false") {
-            // Create true and false radio buttons
-            ['True', 'False'].forEach(value => {
-                const div = document.createElement('div');
-
-                const radio = document.createElement('input');
-                radio.type = 'radio';
-                radio.name = `answer_${questionIndex}`;
-                radio.value = value.toLowerCase();
-
-                const label = document.createElement('label');
-                label.textContent = value;
-
-                div.appendChild(radio);
-                div.appendChild(label);
-                answersContainer.appendChild(div);
-            });
-        } else if (questionType === "multiple_choice") {
-            // Create 4 multiple choice options
-            for (let i = 1; i <= 4; i++) {
-                const div = document.createElement('div');
-
-                const correct = document.createElement('input');
-                correct.type = 'checkbox';
-                correct.name = `mc_correct_${questionIndex}_${i}`;
-                const correctLabel = document.createElement('label');
-                correctLabel.textContent = 'Correct';
-                
-                const input = document.createElement('input');
-                input.type = 'text';
-                input.name = `mc_option_${questionIndex}_${i}`;
-                input.placeholder = `Option ${i}`;
-
-                div.appendChild(correct);
-                div.appendChild(correctLabel);
-                div.appendChild(input);
-                answersContainer.appendChild(div);
+                // Hide setup container and show questions container
+                document.getElementById('microbitSetup').style.display = 'none';
+                document.getElementById('questionsContainer').style.display = 'block';
+            } else {
+                alert('Please enter the number of Hidden micro:bits.');
             }
         }
-
-        parentElement.appendChild(answersContainer);
+    
+        function createAnswerInputs(parentElement, questionType, questionIndex) {
+    // Check if there's an existing answersContainer and remove it
+    const existingAnswersContainer = parentElement.querySelector('.answersContainer');
+    if (existingAnswersContainer) {
+        parentElement.removeChild(existingAnswersContainer);
     }
+
+    const answersContainer = document.createElement('div');
+    answersContainer.className = 'answersContainer';
+
+    if (questionType === "true_false") {
+        // Create true and false radio buttons
+        ['True', 'False'].forEach(value => {
+            const div = document.createElement('div');
+            div.style.display = 'flex';
+            div.style.alignItems = 'center';
+            div.style.marginBottom = '8px';
+
+            const radio = document.createElement('input');
+            radio.type = 'radio';
+            radio.name = `answer_${questionIndex}`;
+            radio.value = value.toLowerCase();
+
+            const label = document.createElement('label');
+            label.textContent = value;
+            label.style.marginLeft = '10px'; // Adjusted this to marginLeft for space after the radio button
+
+            div.appendChild(radio);
+            div.appendChild(label);
+            answersContainer.appendChild(div);
+        });
+    } else if (questionType === "multiple_choice") {
+        // Create 4 multiple choice options
+        for (let i = 1; i <= 4; i++) {
+            const div = document.createElement('div');
+            div.style.display = 'flex';
+            div.style.alignItems = 'center';
+            div.style.marginBottom = '8px';
+
+            const correct = document.createElement('input');
+            correct.type = 'radio';
+            correct.name = `mc_correct_${questionIndex}`;
+            correct.value = `option_${i}`;
+            
+            const correctLabel = document.createElement('label');
+            correctLabel.textContent = 'Correct';
+            correctLabel.style.marginLeft = '10px'; // Adjusted this to marginLeft for space after the radio button
+
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.name = `mc_option_${questionIndex}_${i}`;
+            input.placeholder = `Option ${i}`;
+
+            div.appendChild(correct);
+            div.appendChild(correctLabel);
+            div.appendChild(input);
+            answersContainer.appendChild(div);
+        }
+    }
+
+    parentElement.appendChild(answersContainer);
+}
+
+
 
     function createQuestionInputs() {
         const questionsContainer = document.getElementById('questionsContainer');
@@ -109,9 +115,17 @@
         // Clear previous inputs
         questionsContainer.innerHTML = '';
 
-        for (let i = 0; i < numQuestions; i++) {
-            const div = document.createElement('div');
-            div.className = 'form-group';
+        let pairContainer;
+    for (let i = 0; i < numQuestions; i++) {
+        // Every even question (0-based index), we start a new pair container
+        if (i % 2 === 0) {
+            pairContainer = document.createElement('div');
+            pairContainer.className = 'question-pair';
+            questionsContainer.appendChild(pairContainer);
+        }
+
+        const div = document.createElement('div');
+        div.className = 'form-group';
 
             const questionLabel = document.createElement('label');
             questionLabel.htmlFor = `question_${i + 1}`;
@@ -149,7 +163,8 @@
 
             createAnswerInputs(div, 'true_false', i + 1);
 
-            questionsContainer.appendChild(div);
+            pairContainer.appendChild(div);
+
         }
         const submitButton = document.createElement('button');
             submitButton.id = 'submitQuestionsButton';
@@ -173,21 +188,25 @@
         const type = questionTypes[index].value;
         const answers = [];
 
-        if (type === 'true_false') {
-            const selectedAnswer = document.querySelector(`#questionsContainer input[name=answer_${index + 1}]:checked`);
-            answers.push(selectedAnswer ? selectedAnswer.value : 'None selected');
-        } else if (type === 'multiple_choice') {
-            for (let i = 1; i <= 4; i++) {
-                answers.push(document.querySelector(`#questionsContainer input[name=mc_option_${index + 1}_${i}]`).value);
-            }
-        }
+       if (type === 'true_false') {
+                    const selectedAnswer = document.querySelector(`#questionsContainer input[name=answer_${index + 1}]:checked`);
+                    answers.push(selectedAnswer ? selectedAnswer.value : 'None selected');
+                } else if (type === 'multiple_choice') {
+                    for (let i = 1; i <= 4; i++) {
+                        const optionValue = document.querySelector(`#questionsContainer input[name=mc_option_${index + 1}_${i}]`).value;
+                        const isCorrectOption = document.querySelector(`#questionsContainer input[name=mc_correct_${index + 1}]:checked`);
+                        const isCorrect = isCorrectOption && isCorrectOption.value === `option_${i}` ? true : false;
+                        answers.push(`${optionValue} (Correct: ${isCorrect})`);
 
-        return {
-            question: question.value,
-            type,
-            answers
-        };
-    });
+                    }
+                }
+
+                return {
+                    question: question.value,
+                    type,
+                    answers
+                };
+            });
 
     // Displaying the extracted values
     const questionsDisplay = questionsData.map(q => `Question: ${q.question}, Type: ${q.type}, Answers: ${q.answers.join(', ')}`).join('\n');
