@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="theme.css">
+    <title>micro:bit Hide N Seek Setup</title>
+    <style>
+        .form-group {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<form id="microbitForm">
+    <div class="form-group">
+        <label for="num_beacons">Number of Hidden Microbits:</label>
+        <input type="number" id="num_beacons" name="num_beacons" required>
+    </div>
+
+    <div class="form-group">
+        <label for="num_seekers">Number of Seeking microbits:</label>
+        <input type="number" id="num_seekers" name="num_seekers" required>
+    </div>
+
+    <div class="form-group">
+        <label for="num_clues">Select Number of Clues</label>
+        <select id="num_clues" name="num_clues" onchange="createClueInputs()">
+            <option value="" disabled selected>Choose...</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+        </select>
+    </div>
+
+    <div id="cluesContainer"></div>
+
+    <button type="submit">Submit</button>
+</form>
+
+<script>
+    function createClueInputs() {
+        const cluesContainer = document.getElementById('cluesContainer');
+        const numClues = parseInt(document.getElementById('num_clues').value, 10);
+        
+        // Clear previous inputs
+        cluesContainer.innerHTML = '';
+
+        for (let i = 0; i < numClues; i++) {
+            const div = document.createElement('div');
+            div.className = 'form-group';
+
+            const label = document.createElement('label');
+            label.htmlFor = `clue_${i + 1}`;
+            label.textContent = `Clue ${i + 1}:`;
+            
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.id = `clue_${i + 1}`;
+            input.name = `clue_${i + 1}`;
+            
+            div.appendChild(label);
+            div.appendChild(input);
+            
+            cluesContainer.appendChild(div);
+        }
+    }
+
+    // This function will be triggered when the form is submitted.
+    document.getElementById('microbitForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        // Extract details from the form
+        const beacons = document.getElementById('num_beacons').value;
+        const seekers = document.getElementById('num_seekers').value;
+        const clues = Array.from(document.querySelectorAll('#cluesContainer input')).map(input => input.value);
+
+        // You can now process these values as needed.
+        // For now, just alerting the values.
+        alert(`Beacons: ${beacons}\nSeekers: ${seekers}\nClues: ${clues.join(', ')}`);
+    });
+</script>
+
+</body>
+</html>
