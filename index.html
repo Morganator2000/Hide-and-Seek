@@ -136,17 +136,40 @@
 
     // This function will be triggered when the form is submitted.
     document.getElementById('microbitForm').addEventListener('submit', function(event) {
-        event.preventDefault();
+    event.preventDefault();
 
-        // Extract details from the form
-        const beacons = document.getElementById('num_beacons').value;
-        const seekers = document.getElementById('num_seekers').value;
-        const questions = Array.from(document.querySelectorAll('#questionsContainer input[type=text]')).map(input => input.value);
+    // Extract details from the form
+    const beacons = document.getElementById('num_beacons').value;
+    const seekers = document.getElementById('num_seekers').value;
 
-        // You can now process these values as needed.
-        // For now, just alerting the values.
-        alert(`Beacons: ${beacons}\nSeekers: ${seekers}\nQuestions: ${questions.join(', ')}`);
+    const questionElements = Array.from(document.querySelectorAll('#questionsContainer input[type=text]'));
+    const questionTypes = Array.from(document.querySelectorAll('#questionsContainer select'));
+
+    const questionsData = questionElements.map((question, index) => {
+        const type = questionTypes[index].value;
+        const answers = [];
+
+        if (type === 'true_false') {
+            const selectedAnswer = document.querySelector(`#questionsContainer input[name=answer_${index + 1}]:checked`);
+            answers.push(selectedAnswer ? selectedAnswer.value : 'None selected');
+        } else if (type === 'multiple_choice') {
+            for (let i = 1; i <= 4; i++) {
+                answers.push(document.querySelector(`#questionsContainer input[name=mc_option_${index + 1}_${i}]`).value);
+            }
+        }
+
+        return {
+            question: question.value,
+            type,
+            answers
+        };
     });
+
+    // Displaying the extracted values
+    const questionsDisplay = questionsData.map(q => `Question: ${q.question}, Type: ${q.type}, Answers: ${q.answers.join(', ')}`).join('\n');
+    alert(`Beacons: ${beacons}\nSeekers: ${seekers}\n${questionsDisplay}`);
+});
+
 </script>
 
 </body>
