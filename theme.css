@@ -80,36 +80,18 @@ button:hover {
     display: none; /* Initially hide the container */
 }
 
-.question-pair {
-    flex: 1;
-    max-width: 48%; /* This allows for a tiny gap between the two columns. */
-}
-
 .answersContainer div {
     display: flex;
     align-items: center; 
     margin-bottom: 10px;
 }
 
-.input-label-pair {
-    display: flex;
-    align-items: center;
-    justify-content: space-between; /* Distribute space evenly */
-    width: 100%; /* Take full width of the parent container */
+input[type="radio"] {
+    width: 20px;
+    height: 20px;
 }
 
-.input-label-pair > label {
-    flex: 1; /* Allow label to take as much space as possible */
-    margin: 0; /* Reset margins */
-    padding-right: 10px; /* Add some padding to ensure it doesn't touch the radio button */
+input[type="radio"][data-type="true-false"] {
+    width: 15px;   
+    height: 15px;
 }
-
-.input-label-pair > input[type="radio"] {
-    margin: 0; /* Reset margins */
-    padding: 0; /* Reset padding */
-    flex-basis: auto; /* Let the radio button take its natural space */
-}
-
-
-
-
