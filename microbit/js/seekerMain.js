@@ -1,4 +1,3 @@
-
 // Code that runs when the seeker receives a number.
 radio.onReceivedNumber(function (receivedNumber) {
     if (isSeeking == false) {
@@ -20,7 +19,7 @@ radio.onReceivedNumber(function (receivedNumber) {
         }
     }
 })
-//Cycle through answers
+// Cycle through answers
 input.onButtonPressed(Button.A, function () {
     basic.clearScreen()
     answer = answer - 1
@@ -44,14 +43,14 @@ input.onButtonPressed(Button.AB, function () {
 // Range is approximately 1 meter.
 radio.onReceivedString(function (receivedString) {
     signal = radio.receivedPacket(RadioPacketProperty.SignalStrength)
-    if (isSeeking == true && signal > -70) {
+    if (isSeeking == true && signal >= signalLimit) {
         led.plotBarGraph(
-        Math.map(signal, -70, -42, 0, 9),
+        Math.map(signal, -80, -42, 0, 9),
         9
         )
     }
 })
-//Cycle through answers
+// Cycle through answers
 input.onButtonPressed(Button.B, function () {
     basic.clearScreen()
     answer = answer + 1
@@ -80,7 +79,7 @@ input.onGesture(Gesture.Shake, function () {
 // Code for when the seeker receives a "key" (string with a value)
 // This covers a lot of things.
 radio.onReceivedValue(function (name, value) {
-    if (radio.receivedPacket(RadioPacketProperty.SignalStrength) > -70 && name != "ask") {
+    if (radio.receivedPacket(RadioPacketProperty.SignalStrength) >= signalLimit && name != "ask") {
         // Turns off the signal while answering the question.
         isSeeking = false
         answer = 0
@@ -106,24 +105,25 @@ radio.onReceivedValue(function (name, value) {
         basic.showString("" + (options[0]))
     }
 })
-/**
- * Startup sequence
- */
 let signal = 0
 // This is the position in the array when answering a question.
 let answer = 0
-//Players score. Will increase with a correct answer.
+// Players score. Will increase with a correct answer.
 let score = 0
 // On startup, the seeker is not looking for beacons. This will quickly change.
 let isSeeking = false
- //Assigned by application
-let seekerId = 0
-// Your IDE is probably flagging an error here. Don't worry about it.
+let signalLimit = 0
 let options: string[] = []
+// Assigned by application
+let seekerId = 0
+seekerId = 1
 // The array for possible answers to a question. Currently nothing.
 options = ["N/A"]
 // Set channel 1. All micro:bits will use this channel.
 radio.setGroup(1)
+radio.setTransmitPower(1)
+// This limits the radio strength to about 1 meter
+signalLimit = -83
 // Display seeker's id
 basic.showString("S" + ("" + seekerId))
 basic.pause(200)
