@@ -1,3 +1,4 @@
+from microbit import *
 # Code that runs when the seeker receives a number.
 def on_received_number(receivedNumber):
     global score, isSeeking
