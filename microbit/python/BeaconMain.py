@@ -21,7 +21,7 @@ def on_received_string(receivedString):
         basic.clear_screen()
         basic.pause(100)
     elif not (receivedString.includes("Beacon")):
-        if receivedString == "D":
+        if receivedString == "T":
             # The correct answer to this question, assigned by the app.
             radio.send_number(1)
             basic.show_icon(IconNames.YES)
@@ -37,9 +37,11 @@ radio.on_received_string(on_received_string)
 # Listener to send out the ID and question type to a seeker.
 
 def on_received_value(name, value):
-    if name == "ask" and radio.received_packet(RadioPacketProperty.SIGNAL_STRENGTH) >= signalLimit:
+    global signal
+    signal = radio.received_packet(RadioPacketProperty.SIGNAL_STRENGTH)
+    if name == "ask" and signal >= signalLimit:
         # The type of question (T/F or multi-choice) assigned by application
-        radio.send_value("M4", beacon_id)
+        radio.send_value("T/F", beacon_id)
 radio.on_received_value(on_received_value)
 
 signal = 0
@@ -50,9 +52,9 @@ radio.set_group(1)
 # The weakest radio strength. Range of approximately 25 meters.
 radio.set_transmit_power(1)
 # This limits the radio strength to about 1 meter
-signalLimit = -83
+signalLimit = -65
 # ID assigned by application
-beacon_id = 3
+beacon_id = 1
 # Diplay beacon ID
 basic.show_string("B" + ("" + str(beacon_id)))
 basic.pause(500)

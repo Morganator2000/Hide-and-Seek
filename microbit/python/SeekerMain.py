@@ -116,14 +116,14 @@ isSeeking = False
 signalLimit = 0
 options: List[str] = []
 seekerId = 0
-seekerId = 1
+seekerId = 2
 # The array for possible answers to a question. Currently nothing.
 options = ["N/A"]
 # Set channel 1. All micro:bits will use this channel.
 radio.set_group(1)
 radio.set_transmit_power(1)
 # This limits the radio strength to about 1 meter
-signalLimit = -83
+signalLimit = -65
 # Display seeker's id
 basic.show_string("S" + ("" + str(seekerId)))
 basic.pause(200)
