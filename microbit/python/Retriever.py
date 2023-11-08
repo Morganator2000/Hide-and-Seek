@@ -18,4 +18,3 @@ def on_forever():
     radio.send_string("Homing")
     basic.pause(101)
 basic.forever(on_forever)
-s

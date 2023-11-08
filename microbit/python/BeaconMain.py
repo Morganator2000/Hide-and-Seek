@@ -1,5 +1,5 @@
-from microbit import *
 # Code for when the beacon receives a message from either a seeker or retriever.
+
 def on_received_string(receivedString):
     global signal
     signal = radio.received_packet(RadioPacketProperty.SIGNAL_STRENGTH)
@@ -21,7 +21,7 @@ def on_received_string(receivedString):
         basic.clear_screen()
         basic.pause(100)
     elif not (receivedString.includes("Beacon")):
-        if receivedString == "T":
+        if receivedString == "D":
             # The correct answer to this question, assigned by the app.
             radio.send_number(1)
             basic.show_icon(IconNames.YES)
@@ -37,9 +37,9 @@ radio.on_received_string(on_received_string)
 # Listener to send out the ID and question type to a seeker.
 
 def on_received_value(name, value):
-    if name == "ask" and radio.received_packet(signal) >= signalLimit:
+    if name == "ask" and radio.received_packet(RadioPacketProperty.SIGNAL_STRENGTH) >= signalLimit:
         # The type of question (T/F or multi-choice) assigned by application
-        radio.send_value("T/F", beacon_id)
+        radio.send_value("M4", beacon_id)
 radio.on_received_value(on_received_value)
 
 signal = 0
@@ -52,14 +52,14 @@ radio.set_transmit_power(1)
 # This limits the radio strength to about 1 meter
 signalLimit = -83
 # ID assigned by application
-beacon_id = 2
+beacon_id = 3
 # Diplay beacon ID
-basic.show_string("B" + str(beacon_id))
+basic.show_string("B" + ("" + str(beacon_id)))
 basic.pause(500)
 basic.clear_screen()
 
 def on_forever():
     # Constantly sends out a signal for the seekers to hone-in on.
-    radio.send_string("Beacon" + str(beacon_id))
+    radio.send_string("Beacon" + ("" + str(beacon_id)))
     basic.pause(200)
 basic.forever(on_forever)

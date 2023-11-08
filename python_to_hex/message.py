@@ -1,3 +1,4 @@
+import microbit as mb
 from microbit import *
 
 message = "Fail"
