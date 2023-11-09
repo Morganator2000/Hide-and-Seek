@@ -1,3 +1,4 @@
+from microbit import *
 # Code for when the beacon receives a message from either a seeker or retriever.
 
 def on_received_string(receivedString):
