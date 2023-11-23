@@ -1,4 +1,4 @@
-from microbit import *
+from microbit import radio, basic, IconNames, RadioPacketProperty, List
 # Code for when the beacon receives a message from either a seeker or retriever.
 
 def on_received_string(receivedString):
@@ -21,41 +21,53 @@ def on_received_string(receivedString):
         basic.pause(100)
         basic.clear_screen()
         basic.pause(100)
-    elif not (receivedString.includes("Beacon")):
-        if receivedString == "T":
-            # The correct answer to this question, assigned by the app.
-            radio.send_number(1)
-            basic.show_icon(IconNames.YES)
-            basic.pause(1000)
-            basic.clear_screen()
-        else:
-            radio.send_number(0)
-            basic.show_icon(IconNames.NO)
-            basic.pause(1000)
-            basic.clear_screen()
 radio.on_received_string(on_received_string)
 
 # Listener to send out the ID and question type to a seeker.
 
 def on_received_value(name, value):
-    global signal
+    global signal, answering_seeker
     signal = radio.received_packet(RadioPacketProperty.SIGNAL_STRENGTH)
     if name == "ask" and signal >= signalLimit:
+        answering_seeker = value
         # The type of question (T/F or multi-choice) assigned by application
-        radio.send_value("T/F", beacon_id)
+        radio.send_value("S" + str(answering_seeker) + question_type, beacon_id)
+        radio.set_group(beacon_id)
+    elif name == answer and value == answering_seeker:
+        radio.send_number(1)
+        answering_seeker = 0
+        radio.set_group(0)
+        basic.show_icon(IconNames.YES)
+        basic.pause(1000)
+        basic.clear_screen()
+    elif name != answer and value == answering_seeker:
+        radio.send_number(0)
+        answering_seeker = 0
+        radio.set_group(0)
+        basic.show_icon(IconNames.NO)
+        basic.pause(1000)
+        basic.clear_screen()
+    else:
+        pass
 radio.on_received_value(on_received_value)
 
 signal = 0
+answering_seeker = 0
+answer = ""
+question_type = ""
 beacon_id = 0
 signalLimit = 0
 # The channel for the micro:bits.
-radio.set_group(1)
+radio.set_group(0)
 # The weakest radio strength. Range of approximately 25 meters.
 radio.set_transmit_power(1)
 # This limits the radio strength to about 1 meter
 signalLimit = -65
 # ID assigned by application
 beacon_id = 1
+question_type = "T/F"
+answer = "T"
+answering_seeker = 0
 # Diplay beacon ID
 basic.show_string("B" + ("" + str(beacon_id)))
 basic.pause(500)
