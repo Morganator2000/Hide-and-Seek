@@ -189,3 +189,17 @@ if (type === 'true_false') {
 const questionsDisplay = questionsData.map(q => `Question: ${q.question}, Type: ${q.type}, Answers: ${q.answers.join(', ')}`).join('\n');
 alert(`Beacons: ${beacons}\nSeekers: ${seekers}\n${questionsDisplay}`);
 });
+
+function downloadRetriever(){
+    const link = document.createElement('a');
+        link.href = 'microbit/hex_files/microbit-retriever_base.hex';
+        link.download = 'retriever.hex';
+
+        document.body.appendChild(link);
+        link.click();
+
+        document.body.removeChild(link);
+
+        alert('Download complete. Transfer "retriever.hex" to the micro:bit by dragging it into the micro:bit\'s files.\n' + 
+        'The more LEDs that light up, the closer you are to the lost beacon. Play this game of hot and cold until you find the beacon.');
+    }
