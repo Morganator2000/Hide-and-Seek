@@ -140,6 +140,14 @@ const submitButton = document.createElement('button');
     submitButton.type = 'submit';
     submitButton.textContent = 'Submit';
     questionsContainer.appendChild(submitButton);
+
+const backButton = document.createElement('button');
+    backButton.id = 'backButton'
+    backButton.textContent = 'Go Back';
+    backButton.addEventListener('click', function() {
+        window.location.href = 'index.html';
+    });
+    questionsContainer.appendChild(backButton);
 }
 
 // This function will be triggered when the form is submitted.
