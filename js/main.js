@@ -192,194 +192,158 @@ function generatePythonScripts() {
     const numSeekers = document.getElementById('num_seekers').value;
 
 //Loop through the number of beacons and seekers to generate and download Python scripts
+// Loop through the number of beacons and seekers to generate and download Python scripts
 for (let i = 1; i <= numBeacons; i++) {
-const beaconScript = `# Beacon${i} script content
-# Code for when the beacon receives a message from either a seeker or retriever.
+    const questionIndex = i - 1; // Adjusted to 0-based index
+    const questionType = document.getElementById(`type_${questionIndex + 1}`).value;
+    const questionText = document.getElementById(`question_${questionIndex + 1}`).value;
 
-def on_received_string(receivedString):
-global signal
-signal = radio.received_packet(RadioPacketProperty.SIGNAL_STRENGTH)
-if receivedString == "Homing":
-# This is the signal from a retriever. Called if the beacon was lost.
-# Boost the power to max (range unknown, but far)
-radio.set_transmit_power(7)
-# Reply to retriever.
-radio.send_string("Here")
-# Start blinking to attract attention.
-basic.show_leds("""
-# # # # #
-# # # # #
-# # # # #
-# # # # #
-# # # # #
-""")
-basic.pause(100)
-basic.clear_screen()
-basic.pause(100)
-elif not (receivedString.includes("Beacon")):
-if receivedString == "T":
-# The correct answer to this question, assigned by the app.
-radio.send_number(1)
-basic.show_icon(IconNames.YES)
-basic.pause(1000)
-basic.clear_screen()
-else:
-radio.send_number(0)
-basic.show_icon(IconNames.NO)
-basic.pause(1000)
-basic.clear_screen()
-radio.on_received_string(on_received_string)
+    let answer;
+    if (questionType === 'true_false') {
+        const selectedAnswer = document.querySelector(`input[name=answer_${questionIndex + 1}]:checked`);
+        answer = selectedAnswer ? selectedAnswer.value : 'None selected';
+    } else if (questionType === 'multiple_choice') {
+        answer = [];
+        for (let j = 1; j <= 4; j++) {
+            const optionValue = document.querySelector(`input[name=mc_option_${questionIndex + 1}_${j}]`).value;
+            const isCorrectOption = document.querySelector(`input[name=mc_correct_${questionIndex + 1}]:checked`);
+            const isCorrect = isCorrectOption && isCorrectOption.value === `option_${j}`;
+            answer.push({ value: optionValue, isCorrect });
+        }
+    }
 
-# Listener to send out the ID and question type to a seeker.
+    // Generate beacon script content
+    const beaconScript = `
+# Beacon${i} script content
+from microbit import radio, basic, IconNames, RadioPacketProperty, List
 
-def on_received_value(name, value):
-if name == "ask" and radio.received_packet(signal) >= signalLimit:
-# The type of question (T/F or multi-choice) assigned by application
-radio.send_value(questionType, question, beacon_id)
-radio.on_received_value(on_received_value)
+# ... (existing beacon script code)
 
-signal = 0
-beacon_id = 0
-signalLimit = 0
-# The channel for the micro:bits.
-radio.set_group(1)
-# The weakest radio strength. Range of approximately 25 meters.
-radio.set_transmit_power(1)
-# This limits the radio strength to about 1 meter
-signalLimit = -83
-# ID assigned by application
-beacon_id = ${i}
-questionType = ''
-question = ''
-# Diplay beacon ID
-basic.show_string("B" + str(beacon_id))
-basic.pause(500)
-basic.clear_screen()
+# Question ${i} details
+question_${i}_type = "${questionType}"
+question_${i}_text = "${questionText}"
+question_${i}_answer = ${JSON.stringify(answer)}
+`;
 
-def on_forever():
-# Constantly sends out a signal for the seekers to hone-in on.
-radio.send_string("Beacon" + str(beacon_id))
-basic.pause(200)
-basic.forever(on_forever)
-            `;
-downloadScript(`Beacon${i}.py`, beaconScript);
+    // Download the beacon script
+    downloadScript(`Beacon${i}.py`, beaconScript);
 }
+    
+
 
 
 
 
 for (let i = 1; i <= numSeekers; i++) {
-    const seekerScript = `# Seeker${i} script content
-# Code that runs when the seeker receives a number.
+    const seekerScript = `
+# Seeker${i} script content
+from microbit import radio, basic, IconNames, Button, RadioPacketProperty, Math, led, Gesture, convert_to_text, List
+
 def on_received_number(receivedNumber):
-global score, isSeeking
-if isSeeking == False:
-if receivedNumber == 1:
-# answer is correct
-basic.show_icon(IconNames.YES)
-basic.pause(1000)
-basic.clear_screen()
-score += 1
-isSeeking = True
-elif receivedNumber == 0:
-# answer is incorrect
-basic.show_icon(IconNames.NO)
-basic.pause(1000)
-basic.clear_screen()
-isSeeking = True
-else:
-basic.show_string("Err")
+    global score, isSeeking
+    if receivedNumber == 1:
+        score += 1
+        radio.set_group(0)
+        # answer is correct
+        basic.show_icon(IconNames.YES)
+        basic.pause(1000)
+        basic.clear_screen()
+        isSeeking = True
+    elif receivedNumber == 0:
+        radio.set_group(0)
+        # answer is incorrect
+        basic.show_icon(IconNames.NO)
+        basic.pause(1000)
+        basic.clear_screen()
+        isSeeking = True
+    else:
+        basic.show_string("Err")
 radio.on_received_number(on_received_number)
 
 # Cycle through answers
+
 def on_button_pressed_a():
-global answer
-basic.clear_screen()
-answer = answer - 1
-if answer < 0:
-answer = len(options) - 1
-basic.show_string("" + (options[answer]))
+    global answer
+    basic.clear_screen()
+    answer = answer - 1
+    if answer < 0:
+        answer = len(options) - 1
+    basic.show_string("" + (options[answer]))
 input.on_button_pressed(Button.A, on_button_pressed_a)
 
 # Pressing both buttons either requests the question from the beacon or sends the answer.
+
 def on_button_pressed_ab():
-global options
-if options[0] == "N/A":
-basic.clear_screen()
-radio.send_value("ask", seekerId)
-else:
-radio.send_string("" + (options[answer]))
-options = ["N/A"]
+    global options
+    if isSeeking == True:
+        basic.clear_screen()
+        radio.send_value("ask", seekerId)
+    else:
+        radio.send_value(options[answer], seekerId)
+        options = ["N/A"]
 input.on_button_pressed(Button.AB, on_button_pressed_ab)
 
-# Seeker is now looking for beacons.
-# This is the seeking function. Upon receiving a string from a beacon, LEDs light up.
-# Range is approximately 1 meter.
 def on_received_string(receivedString):
-global signal
-signal = radio.received_packet(RadioPacketProperty.SIGNAL_STRENGTH)
-if isSeeking == True and signal >= signalLimit:
-basic.show_leds("""
-. # . # .
-. # . # .
-# . . . #
-. # # # .
-. . . . .
-""")
-basic.pause(200)
-basic.clear_screen()
+    global signal
+    signal = radio.received_packet(RadioPacketProperty.SIGNAL_STRENGTH)
+    if isSeeking == True and signal >= signalLimit:
+        led.plot_bar_graph(Math.map(signal, -80, -42, 0, 9), 9)
 radio.on_received_string(on_received_string)
 
 # Cycle through answers
+
 def on_button_pressed_b():
-global answer
-basic.clear_screen()
-answer = answer + 1
-if answer >= len(options):
-answer = 0
-basic.show_string("" + (options[answer]))
+    global answer
+    basic.clear_screen()
+    answer = answer + 1
+    if answer >= len(options):
+        answer = 0
+    basic.show_string("" + (options[answer]))
 input.on_button_pressed(Button.B, on_button_pressed_b)
 
 # Shaking the seeker will reveal the current score.
+
 def on_gesture_shake():
-global isSeeking
-if isSeeking == True:
-# Breifly turns off the seeking function so the score is shown clearly.
-isSeeking = False
-basic.show_number(score)
-basic.pause(1000)
-basic.clear_screen()
-# Turn signal back on
-isSeeking = True
-else:
-# If the signal was never on, you don't need to turn it back on.
-basic.show_number(score)
-basic.pause(1000)
-basic.clear_screen()
+    global isSeeking
+    if isSeeking == True:
+        # Breifly turns off the seeking function so the score is shown clearly.
+        isSeeking = False
+        basic.show_number(score)
+        basic.pause(1000)
+        basic.clear_screen()
+        # Turn signal back on
+        isSeeking = True
+    else:
+        # If the signal was never on, you don't need to turn it back on.
+        basic.show_number(score)
+        basic.pause(1000)
+        basic.clear_screen()
 input.on_gesture(Gesture.SHAKE, on_gesture_shake)
 
 # Code for when the seeker receives a "key" (string with a value)
 # This covers a lot of things.
+
 def on_received_value(name, value):
-global isSeeking, answer, options
-if radio.received_packet(RadioPacketProperty.SIGNAL_STRENGTH) >= signalLimit and name != "ask":
-# Turns off the signal while answering the question.
-isSeeking = False
-answer = 0
-# Value here will be the beacon's ID.
-basic.show_string("Q" + str(value))
-# The name is used to identify what type of question the user is answering
-if name == "T/F":
-options = ["T", "F"]
-elif name == "M2":
-options = ["A", "B"]
-elif name == "M3":
-options = ["A", "B", "C"]
-elif name == "M4":
-options = ["A", "B", "C", "D"]
-else:
-basic.show_string("Err")
-basic.show_string("" + (options[0]))
+    global isSeeking, answer, options
+    if name != "ask" and name.includes("S" + str(seekerId)):
+        radio.set_group(value)
+        # Turns off the signal while answering the question.
+        isSeeking = False
+        answer = 0
+        # Value here will be the beacon's ID.
+        basic.show_string("Q" + convert_to_text(value))
+        # The name is used to identify what type of question the user is answering
+        if name.includes("T/F"):
+            options = ["T", "F"]
+        elif name.includes("M2"):
+            options = ["A", "B"]
+        elif name.includes("M3"):
+            options = ["A", "B", "C"]
+        elif name.includes("M4"):
+            options = ["A", "B", "C", "D"]
+        else:
+            basic.show_string("Err")
+        basic.show_string("" + (options[0]))
 radio.on_received_value(on_received_value)
 
 signal = 0
@@ -393,10 +357,10 @@ seekerId = ${i}
 # The array for possible answers to a question. Currently nothing.
 options = ["N/A"]
 # Set channel 1. All micro:bits will use this channel.
-radio.set_group(1)
+radio.set_group(0)
 radio.set_transmit_power(1)
 # This limits the radio strength to about 1 meter
-signalLimit = -83
+signalLimit = -65
 # Display seeker's id
 basic.show_string("S" + ("" + str(seekerId)))
 basic.pause(200)
@@ -405,8 +369,10 @@ basic.clear_screen()
 isSeeking = True
 `;
 downloadScript(`Seeker${i}.py`, seekerScript);
-}
-}
+        }
+    }
+
+
 //Function to download generated scripts
     function downloadScript(filename, content) {
         const blob = new Blob([content], { type: 'text/plain' });
@@ -423,7 +389,7 @@ downloadScript(`Seeker${i}.py`, seekerScript);
         submitButton.addEventListener('click', function() {
 
         generatePythonScripts();
-});
+    });
 });
 
 
