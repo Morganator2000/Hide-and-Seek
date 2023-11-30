@@ -199,7 +199,7 @@ for (let i = 1; i <= numBeacons; i++) {
     const questionText = document.getElementById(`question_${questionIndex + 1}`).value;
 
     let answer;
-    if (questionType === 'true_false') {
+    if (questionType === 'T/F') {
         const selectedAnswer = document.querySelector(`input[name=answer_${questionIndex + 1}]:checked`);
         answer = selectedAnswer ? selectedAnswer.value : 'None selected';
     } else if (questionType === 'multiple_choice') {
@@ -220,9 +220,9 @@ from microbit import radio, basic, IconNames, RadioPacketProperty, List
 # ... (existing beacon script code)
 
 # Question ${i} details
-question_${i}_type = "${questionType}"
+question_type = "${questionType}"
 question_${i}_text = "${questionText}"
-question_${i}_answer = ${JSON.stringify(answer)}
+answer = ${JSON.stringify(answer)}
 `;
 
     // Download the beacon script
