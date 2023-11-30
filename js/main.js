@@ -162,28 +162,28 @@ const questionElements = Array.from(document.querySelectorAll('#questionsContain
 const questionTypes = Array.from(document.querySelectorAll('#questionsContainer select'));
 
 const questionsData = questionElements.map((question, index) => {
-const type = questionTypes[index].value;
-const answers = [];
+    const type = questionTypes[index] ? questionTypes[index].value : 'N/A';
+    const answers = [];
 
-if (type === 'true_false') {
-            const selectedAnswer = document.querySelector(`#questionsContainer input[name=answer_${index + 1}]:checked`);
-            answers.push(selectedAnswer ? selectedAnswer.value : 'None selected');
-        } else if (type === 'multiple_choice') {
-            for (let i = 1; i <= 4; i++) {
-                const optionValue = document.querySelector(`#questionsContainer input[name=mc_option_${index + 1}_${i}]`).value;
-                const isCorrectOption = document.querySelector(`#questionsContainer input[name=mc_correct_${index + 1}]:checked`);
-                const isCorrect = isCorrectOption && isCorrectOption.value === `option_${i}` ? true : false;
-                answers.push(`${optionValue} (Correct: ${isCorrect})`);
-
-            }
+    if (type === 'true_false') {
+        const selectedAnswer = document.querySelector(`#questionsContainer input[name=answer_${index + 1}]:checked`);
+        answers.push(selectedAnswer ? selectedAnswer.value : 'None selected');
+    } else if (type === 'multiple_choice') {
+        for (let i = 1; i <= 4; i++) {
+            const optionValue = document.querySelector(`#questionsContainer input[name=mc_option_${index + 1}_${i}]`).value;
+            const isCorrectOption = document.querySelector(`#questionsContainer input[name=mc_correct_${index + 1}]:checked`);
+            const isCorrect = isCorrectOption && isCorrectOption.value === `option_${i}` ? true : false;
+            answers.push(`${optionValue} (Correct: ${isCorrect})`);
         }
+    }
 
-        return {
-            question: question.value,
-            type,
-            answers
-        };
-    });
+    return {
+        question: question.value,
+        type,
+        answers
+    };
+});
+
     
 //Generate Python script
 function generatePythonScripts() {
@@ -192,7 +192,7 @@ function generatePythonScripts() {
     const numSeekers = document.getElementById('num_seekers').value;
 
 //Loop through the number of beacons and seekers to generate and download Python scripts
-// Loop through the number of beacons and seekers to generate and download Python scripts
+
 for (let i = 1; i <= numBeacons; i++) {
     const questionIndex = i - 1; // Adjusted to 0-based index
     const questionType = document.getElementById(`type_${questionIndex + 1}`).value;
