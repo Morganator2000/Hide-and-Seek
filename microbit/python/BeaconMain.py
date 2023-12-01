@@ -65,8 +65,8 @@ radio.set_transmit_power(1)
 signalLimit = -65
 # ID assigned by application
 beacon_id = 1
-question_type = "T/F"
-answer = "T"
+question_type = "true_false"
+answer = "true"
 answering_seeker = 0
 # Diplay beacon ID
 basic.show_string("B" + ("" + str(beacon_id)))

@@ -165,10 +165,10 @@ const questionsData = questionElements.map((question, index) => {
     const type = questionTypes[index] ? questionTypes[index].value : 'N/A';
     const answers = [];
 
-    if (type === 'true_false') {
+    if (type === 'T/F') {
         const selectedAnswer = document.querySelector(`#questionsContainer input[name=answer_${index + 1}]:checked`);
         answers.push(selectedAnswer ? selectedAnswer.value : 'None selected');
-    } else if (type === 'multiple_choice') {
+    } else if (type === 'M') {
         for (let i = 1; i <= 4; i++) {
             const optionValue = document.querySelector(`#questionsContainer input[name=mc_option_${index + 1}_${i}]`).value;
             const isCorrectOption = document.querySelector(`#questionsContainer input[name=mc_correct_${index + 1}]:checked`);
@@ -199,7 +199,7 @@ for (let i = 1; i <= numBeacons; i++) {
     const questionText = document.getElementById(`question_${questionIndex + 1}`).value;
 
     let answer;
-    if (questionType === 'T/F') {
+    if (questionType === 'true_false') {
         const selectedAnswer = document.querySelector(`input[name=answer_${questionIndex + 1}]:checked`);
         answer = selectedAnswer ? selectedAnswer.value : 'None selected';
     } else if (questionType === 'multiple_choice') {
@@ -217,7 +217,7 @@ for (let i = 1; i <= numBeacons; i++) {
 # Beacon${i} script content
 from microbit import radio, basic, IconNames, RadioPacketProperty, List
 
-# ... (existing beacon script code)
+# ... (need to add rest of beacon code)
 
 # Question ${i} details
 question_type = "${questionType}"
