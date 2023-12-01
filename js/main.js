@@ -192,28 +192,32 @@ function generatePythonScripts() {
 
     // Loop through the number of beacons and seekers to generate and download Python scripts
     for (let i = 1; i <= numBeacons; i++) {
-        const questionIndex = i - 1; // Adjusted to 0-based index
-        const questionType = document.getElementById(`type_${questionIndex + 1}`).value;
+        const questionIndex = i - 1;
+        let questionType = document.getElementById(`type_${questionIndex + 1}`).value;
         const questionText = document.getElementById(`question_${questionIndex + 1}`).value;
 
         let answer;
-        let options; // Declare options here
+        let options = [];
 
         if (questionType === 'true_false') {
             const selectedAnswer = document.querySelector(`input[name=answer_${questionIndex + 1}]:checked`);
-            answer = selectedAnswer ? selectedAnswer.value : 'None selected';
+            answer = selectedAnswer ? selectedAnswer.value : 'N/A';
         } else if (questionType === 'multiple_choice') {
-            options = [];
             for (let j = 1; j <= 4; j++) {
                 const optionValue = document.querySelector(`input[name=mc_option_${questionIndex + 1}_${j}]`).value;
-                const isCorrectOption = document.querySelector(`input[name=mc_correct_${questionIndex + 1}]:checked`);
-                const isCorrect = isCorrectOption && isCorrectOption.value === `option_${j}`;
-                options.push({ value: optionValue, isCorrect });
+                if (optionValue.trim() !== '') {
+                    options.push({ value: optionValue });
+                }
             }
 
+            // Determine the question_type based on the number of non-blank options
+            const nonBlankOptionsCount = options.length;
+            questionType = `multiple_choice${nonBlankOptionsCount}`;
+
             // Extract the correct answer option letter (A, B, C, D)
-            const correctAnswerObj = options.find(option => option.isCorrect);
-            answer = correctAnswerObj ? String.fromCharCode(65 + options.findIndex(option => option.isCorrect)) : 'None selected';
+            const isCorrectOption = document.querySelector(`input[name=mc_correct_${questionIndex + 1}]:checked`);
+            const correctAnswerIndex = isCorrectOption ? parseInt(isCorrectOption.value.replace('option_', ''), 10) - 1 : -1;
+            answer = correctAnswerIndex !== -1 ? String.fromCharCode(65 + correctAnswerIndex) : 'N/A';
         }
 
         // Generate beacon script content
@@ -223,10 +227,10 @@ from microbit import radio, basic, IconNames, RadioPacketProperty, List
 
 # ... (existing beacon script code)
 
-# Question ${i} details
+# Beacon${i} details
 question_type = "${questionType}"
 question_${i}_text = "${questionText}"
-answer = "${answer}"  # Assign the correct option letter
+answer = "${answer}"
 `;
 
         // Download the beacon script
