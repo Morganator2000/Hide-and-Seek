@@ -1,0 +1,13 @@
+The micro:bit code does not always copy correctly using the drag-and drop method.
+Here's what you do in those situations.
+
+Windows:
+1. Open the command prompt.
+2. Navigate to the download folder. Your path probably looks like this:
+    cd /Users/username/Downloads
+Be sure to replace "username" with your username.
+3. Run this command, using the name of your hex file. It assumes the micro:bit is in the D drive.
+    robocopy /z . D:\ file-name.hex
+
+So far this method has not failed me.
+This command can maybe be used to copy the hex files from the app.
