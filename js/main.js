@@ -165,10 +165,10 @@ const questionsData = questionElements.map((question, index) => {
     const type = questionTypes[index] ? questionTypes[index].value : 'N/A';
     const answers = [];
 
-    if (type === 'T/F') {
+    if (type === 'true_false') {
         const selectedAnswer = document.querySelector(`#questionsContainer input[name=answer_${index + 1}]:checked`);
         answers.push(selectedAnswer ? selectedAnswer.value : 'None selected');
-    } else if (type === 'M') {
+    } else if (type === 'multiple_choice') {
         for (let i = 1; i <= 4; i++) {
             const optionValue = document.querySelector(`#questionsContainer input[name=mc_option_${index + 1}_${i}]`).value;
             const isCorrectOption = document.querySelector(`#questionsContainer input[name=mc_correct_${index + 1}]:checked`);
@@ -187,47 +187,51 @@ const questionsData = questionElements.map((question, index) => {
     
 //Generate Python script
 function generatePythonScripts() {
-
     const numBeacons = document.getElementById('num_beacons').value;
     const numSeekers = document.getElementById('num_seekers').value;
 
-//Loop through the number of beacons and seekers to generate and download Python scripts
+    // Loop through the number of beacons and seekers to generate and download Python scripts
+    for (let i = 1; i <= numBeacons; i++) {
+        const questionIndex = i - 1; // Adjusted to 0-based index
+        const questionType = document.getElementById(`type_${questionIndex + 1}`).value;
+        const questionText = document.getElementById(`question_${questionIndex + 1}`).value;
 
-for (let i = 1; i <= numBeacons; i++) {
-    const questionIndex = i - 1; // Adjusted to 0-based index
-    const questionType = document.getElementById(`type_${questionIndex + 1}`).value;
-    const questionText = document.getElementById(`question_${questionIndex + 1}`).value;
+        let answer;
+        let options; // Declare options here
 
-    let answer;
-    if (questionType === 'true_false') {
-        const selectedAnswer = document.querySelector(`input[name=answer_${questionIndex + 1}]:checked`);
-        answer = selectedAnswer ? selectedAnswer.value : 'None selected';
-    } else if (questionType === 'multiple_choice') {
-        answer = [];
-        for (let j = 1; j <= 4; j++) {
-            const optionValue = document.querySelector(`input[name=mc_option_${questionIndex + 1}_${j}]`).value;
-            const isCorrectOption = document.querySelector(`input[name=mc_correct_${questionIndex + 1}]:checked`);
-            const isCorrect = isCorrectOption && isCorrectOption.value === `option_${j}`;
-            answer.push({ value: optionValue, isCorrect });
+        if (questionType === 'true_false') {
+            const selectedAnswer = document.querySelector(`input[name=answer_${questionIndex + 1}]:checked`);
+            answer = selectedAnswer ? selectedAnswer.value : 'None selected';
+        } else if (questionType === 'multiple_choice') {
+            options = [];
+            for (let j = 1; j <= 4; j++) {
+                const optionValue = document.querySelector(`input[name=mc_option_${questionIndex + 1}_${j}]`).value;
+                const isCorrectOption = document.querySelector(`input[name=mc_correct_${questionIndex + 1}]:checked`);
+                const isCorrect = isCorrectOption && isCorrectOption.value === `option_${j}`;
+                options.push({ value: optionValue, isCorrect });
+            }
+
+            // Extract the correct answer option letter (A, B, C, D)
+            const correctAnswerObj = options.find(option => option.isCorrect);
+            answer = correctAnswerObj ? String.fromCharCode(65 + options.findIndex(option => option.isCorrect)) : 'None selected';
         }
-    }
 
-    // Generate beacon script content
-    const beaconScript = `
+        // Generate beacon script content
+        const beaconScript = `
 # Beacon${i} script content
 from microbit import radio, basic, IconNames, RadioPacketProperty, List
 
-# ... (need to add rest of beacon code)
+# ... (existing beacon script code)
 
 # Question ${i} details
 question_type = "${questionType}"
 question_${i}_text = "${questionText}"
-answer = ${JSON.stringify(answer)}
+answer = "${answer}"  # Assign the correct option letter
 `;
 
-    // Download the beacon script
-    downloadScript(`Beacon${i}.py`, beaconScript);
-}
+        // Download the beacon script
+        downloadScript(`Beacon${i}.py`, beaconScript);
+    }
     
 
 
