@@ -96,11 +96,11 @@ def on_received_value(name, value):
         # The name is used to identify what type of question the user is answering
         if name.includes("true_false"):
             options = ["T", "F"]
-        elif name.includes("M2"):
+        elif name.includes("multiple_choice2"):
             options = ["A", "B"]
-        elif name.includes("M3"):
+        elif name.includes("multiple_choice3"):
             options = ["A", "B", "C"]
-        elif name.includes("M4"):
+        elif name.includes("multiple_choice4"):
             options = ["A", "B", "C", "D"]
         else:
             basic.show_string("Err")
