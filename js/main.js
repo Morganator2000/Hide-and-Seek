@@ -135,12 +135,14 @@ div.className = 'form-group';
     pairContainer.appendChild(div);
 
 }
+// Create submit button
 const submitButton = document.createElement('button');
     submitButton.id = 'submitQuestionsButton';
     submitButton.type = 'submit';
     submitButton.textContent = 'Submit';
     questionsContainer.appendChild(submitButton);
 
+// create back button
 const backButton = document.createElement('button');
     backButton.id = 'backButton'
     backButton.textContent = 'Go Back';
@@ -148,6 +150,15 @@ const backButton = document.createElement('button');
         window.location.href = 'index.html';
     });
     questionsContainer.appendChild(backButton);
+
+ // Create Save Button
+ const saveButton = document.createElement('button');
+    saveButton.id = 'saveButton';
+    saveButton.type = 'button';
+    saveButton.textContent = 'Save Questions';
+    saveButton.onclick = saveQuestions;
+    questionsContainer.appendChild(saveButton);
+
 }
 
 // This function will be triggered when the form is submitted.
@@ -203,3 +214,46 @@ function downloadRetriever(){
         alert('Download complete. Transfer "retriever.hex" to the micro:bit by dragging it into the micro:bit\'s files.\n' + 
         'The more LEDs that light up, the closer you are to the lost beacon. Play this game of hot and cold until you find the beacon.');
     }
+
+    function saveQuestions() {
+        // Collect question and answer data
+        const questionsData = [];
+        const numQuestions = parseInt(document.getElementById('num_beacons').value, 10);
+    
+        for (let i = 0; i < numQuestions; i++) {
+            const question = document.getElementById(`question_${i + 1}`).value;
+            const type = document.getElementById(`type_${i + 1}`).value;
+            const answers = [];
+    
+            if (type === 'true_false') {
+                const selectedAnswer = document.querySelector(`input[name=answer_${i + 1}]:checked`);
+                answers.push(selectedAnswer ? selectedAnswer.value : 'none');
+            } else if (type === 'multiple_choice') {
+                for (let j = 1; j <= 4; j++) {
+                    const optionValue = document.querySelector(`input[name=mc_option_${i + 1}_${j}]`).value;
+                    const isCorrectOption = document.querySelector(`input[name=mc_correct_${i + 1}]:checked`);
+                    const isCorrect = isCorrectOption && isCorrectOption.value === `option_${j}`;
+                    answers.push({ option: optionValue, correct: isCorrect });
+                }
+            }
+    
+            questionsData.push({ question, type, answers });
+        }
+    
+        // Convert data to JSON
+        const jsonData = JSON.stringify(questionsData, null, 2);
+    
+        // Create Blob from JSON data
+        const blob = new Blob([jsonData], { type: 'application/json' });
+    
+        // Create a link and trigger download
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'questions.json';
+        document.body.appendChild(link); // Required for Firefox
+        link.click();
+        document.body.removeChild(link); // Clean up
+        URL.revokeObjectURL(url); // Free up memory
+    }
+    
