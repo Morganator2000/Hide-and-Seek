@@ -55,7 +55,10 @@ radio.set_transmit_power(1)
 # This limits the radio strength to about 1 meter
 signalLimit = -65
 # ID assigned by application
-beacon_id = 2
+beacon_id = 1
+question_type = "multiple_choice"
+answer = ""
+answering_seeker = 0
 # Diplay beacon ID
 basic.show_string("B" + ("" + str(beacon_id)))
 basic.pause(500)

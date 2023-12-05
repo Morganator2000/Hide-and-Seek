@@ -97,13 +97,13 @@ def on_received_value(name, value):
         # Value here will be the beacon's ID.
         basic.show_string("Q" + ("" + str(value)))
         # The name is used to identify what type of question the user is answering
-        if name == "T/F":
+        if name.includes("true_false"):
             options = ["T", "F"]
-        elif name == "M2":
+        elif name.includes("M2"):
             options = ["A", "B"]
-        elif name == "M3":
+        elif name.includes("M3"):
             options = ["A", "B", "C"]
-        elif name == "M4":
+        elif name.includes("M4"):
             options = ["A", "B", "C", "D"]
         else:
             basic.show_string("Err")
