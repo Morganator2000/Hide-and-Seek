@@ -198,7 +198,7 @@ function generatePythonScripts() {
 
         let answer;
         let options = [];
-
+        // Retrieves data pertaining to questionType
         if (questionType === 'true_false') {
             const selectedAnswer = document.querySelector(`input[name=answer_${questionIndex + 1}]:checked`);
             answer = selectedAnswer ? selectedAnswer.value : 'N/A';
