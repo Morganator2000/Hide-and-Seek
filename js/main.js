@@ -334,27 +334,27 @@ basic.forever(on_forever)
 for (let i = 1; i <= numSeekers; i++) {
     const seekerScript = `
 # Seeker${i} script content
-from microbit import radio, basic, IconNames, Button, RadioPacketProperty, Math, led, Gesture, convert_to_text, List
+from microbit import *
+# Code that runs when the seeker receives a number.
 
 def on_received_number(receivedNumber):
     global score, isSeeking
-    if receivedNumber == 1:
-        score += 1
-        radio.set_group(0)
-        # answer is correct
-        basic.show_icon(IconNames.YES)
-        basic.pause(1000)
-        basic.clear_screen()
-        isSeeking = True
-    elif receivedNumber == 0:
-        radio.set_group(0)
-        # answer is incorrect
-        basic.show_icon(IconNames.NO)
-        basic.pause(1000)
-        basic.clear_screen()
-        isSeeking = True
-    else:
-        basic.show_string("Err")
+    if isSeeking == False:
+        if receivedNumber == 1:
+            # answer is correct
+            basic.show_icon(IconNames.YES)
+            basic.pause(1000)
+            basic.clear_screen()
+            score += 1
+            isSeeking = True
+        elif receivedNumber == 0:
+            # answer is incorrect
+            basic.show_icon(IconNames.NO)
+            basic.pause(1000)
+            basic.clear_screen()
+            isSeeking = True
+        else:
+            basic.show_string("Err")
 radio.on_received_number(on_received_number)
 
 # Cycle through answers
@@ -372,13 +372,17 @@ input.on_button_pressed(Button.A, on_button_pressed_a)
 
 def on_button_pressed_ab():
     global options
-    if isSeeking == True:
+    if options[0] == "N/A":
         basic.clear_screen()
         radio.send_value("ask", seekerId)
     else:
-        radio.send_value(options[answer], seekerId)
+        radio.send_string("" + (options[answer]))
         options = ["N/A"]
 input.on_button_pressed(Button.AB, on_button_pressed_ab)
+
+# Seeker is now looking for beacons.
+# This is the seeking function. Upon receiving a string from a beacon, LEDs light up.
+# Range is approximately 1 meter.
 
 def on_received_string(receivedString):
     global signal
@@ -422,21 +426,20 @@ input.on_gesture(Gesture.SHAKE, on_gesture_shake)
 
 def on_received_value(name, value):
     global isSeeking, answer, options
-    if name != "ask" and name.includes("S" + str(seekerId)):
-        radio.set_group(value)
+    if radio.received_packet(RadioPacketProperty.SIGNAL_STRENGTH) >= signalLimit and name != "ask":
         # Turns off the signal while answering the question.
         isSeeking = False
         answer = 0
         # Value here will be the beacon's ID.
-        basic.show_string("Q" + convert_to_text(value))
+        basic.show_string("Q" + ("" + str(value)))
         # The name is used to identify what type of question the user is answering
-        if name.includes("T/F"):
+        if name.includes("true_false"):
             options = ["T", "F"]
-        elif name.includes("M2"):
+        elif name.includes("multiple_choice2"):
             options = ["A", "B"]
-        elif name.includes("M3"):
+        elif name.includes("multiple_choice3"):
             options = ["A", "B", "C"]
-        elif name.includes("M4"):
+        elif name.includes("multiple_choice4"):
             options = ["A", "B", "C", "D"]
         else:
             basic.show_string("Err")
@@ -454,7 +457,7 @@ seekerId = ${i}
 # The array for possible answers to a question. Currently nothing.
 options = ["N/A"]
 # Set channel 1. All micro:bits will use this channel.
-radio.set_group(0)
+radio.set_group(1)
 radio.set_transmit_power(1)
 # This limits the radio strength to about 1 meter
 signalLimit = -65
