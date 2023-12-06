@@ -1,3 +1,6 @@
+// Multiple choice label array.
+const optionLabels = ['A', 'B', 'C', 'D'];
+
 function showQuestionsForm() {
     const numBeacons = document.getElementById('num_beacons').value;
     if (numBeacons && !isNaN(numBeacons) && numBeacons > 0) {
@@ -43,9 +46,6 @@ if (questionType === "true_false") {
     div.appendChild(label);
     answersContainer.appendChild(div);
 });
-
-// Multiple choice label array.
-const optionLabels = ['A', 'B', 'C', 'D'];
 
 } else if (questionType === "multiple_choice") {
 // Create 4 multiple choice options
