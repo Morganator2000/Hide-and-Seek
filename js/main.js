@@ -1,3 +1,6 @@
+// Multiple choice label array.
+const optionLabels = ['A', 'B', 'C', 'D'];
+
 function showQuestionsForm() {
     const numBeacons = document.getElementById('num_beacons').value;
     if (numBeacons && !isNaN(numBeacons) && numBeacons > 0) {
@@ -59,7 +62,7 @@ for (let i = 1; i <= 4; i++) {
     correct.style.marginRight = '4px';  /* Adjust this value as needed */
     
     const correctLabel = document.createElement('label');
-    correctLabel.textContent = 'Answer';
+    correctLabel.textContent = `${optionLabels[i - 1]}) `;
     correctLabel.style.marginLeft = '5px'; // Adjusted this to marginLeft for space after the radio button
 
     const input = document.createElement('input');
