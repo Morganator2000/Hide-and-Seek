@@ -6,6 +6,90 @@ body {
     padding: 0;
 }
 
+input[type="number"] {
+    width: calc(100% - 20px);
+    max-width: 400px; 
+    margin: auto;
+    display: block; 
+}
+
+body.inverted {
+    filter: invert(100%);
+    background-color: #0b0b0b;
+}
+
+.switch-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; 
+}
+
+.switch-title {
+    font-size: 16px;
+    color: #000000; 
+    margin-bottom: 10px; 
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+    order: 0;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+  
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+  
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+  
+input:checked + .slider {
+    background-color: #2196F3;
+}
+  
+input:focus + .slider {
+    box-shadow: 0 0 1px #2196F3;
+}
+  
+input:checked + .slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+}
+  
+.slider.round {
+    border-radius: 34px;
+}
+  
+.slider.round:before {
+    border-radius: 50%;
+}  
+
 .centered-container {
     display: flex;
     justify-content: center;
@@ -95,4 +179,42 @@ input[type="radio"] {
 input[type="radio"][data-type="true-false"] {
     width: 15px;   
     height: 15px;
+}
+
+.link-style-button {
+    background: none;
+    border: none;
+    color: rgb(21, 17, 17); 
+    text-decoration: underline;
+    padding: 5px;
+    margin-top: 15px;
+    cursor: pointer;
+    font-size: 16px;
+    display: block; 
+}
+
+.link-style-button:hover {
+    color: rgb(107, 107, 238);
+    background: none; 
+    text-decoration: underline; 
+}
+
+.question-label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.question-input {
+    width: calc(100% - 30px); 
+    margin-bottom: 10px;
+}
+
+.type-label {
+    display: block;
+    margin-top: 10px; 
+    margin-bottom: 5px;
+}
+
+.type-select {
+    margin-bottom: 10px;
 }
