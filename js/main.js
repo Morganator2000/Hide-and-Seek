@@ -1,3 +1,5 @@
+const optionLabels = ['A', 'B', 'C', 'D'];
+
 // Toggle '.inverted' class.
 function toggleColorInversion() {
     var element = document.body;
