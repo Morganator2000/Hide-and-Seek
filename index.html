@@ -10,7 +10,14 @@
 <body>
     <div class="centered-container">
     <form id="microbitForm">
-
+        <div class="switch-container">
+            <div class="switch-title">Invert Colors</div>
+            <label class="switch">
+                <input type="checkbox" id="toggleSwitch" onchange="toggleColorInversion()">
+                <span class="slider round"></span>
+            </label>
+        </div>
+        <br>
         <div id="microbitSetup">
             <div class="form-group">
                 <label for="num_seekers">Number of Seeking micro:bits:</label>
@@ -22,11 +29,10 @@
                 <input type="number" id="num_beacons" name="num_beacons" required>
             </div>
             <button id="continueButton" type="button" onclick="showQuestionsForm()">Continue</button>
-            <button id="downloadButton" type="button" onclick="downloadRetriever()">Help, I've lost a micro:bit!</button>
-            
         </div>
         <div id="questionsContainer">
         </div>
+            <button id="downloadButton" type="button" class="link-style-button" onclick="downloadRetriever()">Help, I've lost a micro:bit!</button>
     </form>
 </div>
 
