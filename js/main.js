@@ -65,7 +65,7 @@ for (let i = 1; i <= 4; i++) {
     correct.style.marginRight = '4px';  /* Adjust this value as needed */
     
     const correctLabel = document.createElement('label');
-    correctLabel.textContent = `Answer`;
+    correctLabel.textContent = `Answer ${optionLabels[i - 1]}) `;
     correctLabel.style.marginLeft = '5px'; // Adjusted this to marginLeft for space after the radio button
 
     const input = document.createElement('input');
