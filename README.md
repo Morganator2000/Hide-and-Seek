@@ -12,7 +12,7 @@
 
 **Using the Seekers.**
 1. Press the button on the back of the micro:bit to turn them on and reset them. If there is a switch on the battery pack, turn that on. DO NOT turn the seeker off for the rest of the game.
-2. Use the clues to track down the hidden beacons. When you are close, a [symbol] will appear on the screen.
+2. Use the clues to track down the hidden beacons. When you are close the seeker will light up.
 3. Press both buttons to receive the question. It will appear on your seeker.
 4. Scroll to the correct answer using the A and B buttons. Press both buttons to choose that as the correct answer.
 5. You will see a checkmark if you got the question correct and an X if you got it incorrect.
